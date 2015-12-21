@@ -1,0 +1,11 @@
+Nikola Tesla,
+Albert Einstein,
+Ludwig Van Beethoven,
+Lenardo da Vinci,
+Srinivasa Ramanujan,
+Galileo Galilei,
+Isaac Newton,
+Charles Darwin,
+Alan Turing,
+Ada lovelace,
+Charles Babbage
