@@ -1,4 +1,30 @@
 $(function(){//On dom ready
+	
+	var namelist;
+	//Get the student list
+	document.getElementById("studentfile").addEventListener('change',function(){
+        console.log(this.files[0]);
+        if(this.files[0] != null){
+			var fr = new FileReader();
+			fr.onload = function(){
+				    namelist = this.result;
+			    	console.log(typeof(namelist));
+                    display_members(namelist, 'stopped');
+			}
+            var mimetype = this.files[0].type;
+            if ( mimetype == 'text/plain'){
+                console.log("File Uploaded..")       
+                fr.readAsText(this.files[0]);
+            }
+		    else{
+			    console.log("File format not supported %s", mimetype);
+		    }
+        }
+        else{
+            console.log("No file selected");
+        }
+	});
+    console.log(namelist);
     var total = 0;
     var prev = -1
     var id = -1;
@@ -70,7 +96,9 @@ $(function(){//On dom ready
             .css({
                     'transition-time':'3.0s',
                     'target-arrow-shape': 'triangle',
-                    'label':' data(label)'
+                    'label':' data(label)',
+				    'curve-style': 'bezier',
+                	'control-point-step-size': 40
         }),
         elements:{
         
@@ -82,18 +110,28 @@ $(function(){//On dom ready
         autoungrabify: true
 
     });
-var add =function(){
-    if(id >=10)
-        return;
-cy.add({group: 'nodes',
-        data: {id:'Chris'+id, name: 'Christian'+id},
-})
-cy.add({group: 'edges',
-        data: {id:'edge'+id, source:'Chris'+(id-1), target:'Chris'+id}
-})
-    id=id+1;
-setTimeout(add,2000);
-};
+	 //I am selecting a circular layout for the nodes
+	 var options = {
+	   name: 'circle',
+
+	   fit: true, // whether to fit the viewport to the graph
+	   padding: 30, // the padding on fit
+	   boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
+	   avoidOverlap: true, // prevents node overlap, may overflow boundingBox and radius if not enough space
+	   radius: 300, // the radius of the circle
+	   startAngle: 3/2 * Math.PI, // where nodes start in radians
+	   sweep: undefined, // how many radians should be between the first and last node (defaults to full circle)
+	   clockwise: true, // whether the layout should go clockwise (true) or counterclockwise/anticlockwise (false)
+	   sort: undefined, // a sorting function to order the nodes; e.g. function(a, b){ return a.data('weight') - b.data('weight') }
+	   animate: false, // whether to transition the node positions
+	   animationDuration: 500, // duration of animation in ms if enabled
+	   animationEasing: undefined, // easing of animation if enabled
+	   ready: undefined, // callback on layoutready
+	   stop: undefined // callback on layoutstop
+	 };
+	 
+	 
+//select event handler
 cy.on('select', 'node', function(event){
     id++;
     if(prev == -1){
@@ -111,47 +149,30 @@ cy.on('select', 'node', function(event){
 });
     
 
-    
-var add_student = function(pid, name, classn, pos, pic){
+//Node addition    
+var add_student = function(name, classn, pic){
    cy.add({group: 'nodes', 
-           data:{ id: pid, 
+           data:{ id: name, 
                   name: name, 
                   pic: pic 
                 },
-           'classes':classn
+           'classes':classn,
+			  renderedPosition:pos 
          })
 }
-var add_edge = function(source, target){
-    id++;
-    cy.add({group: 'edges',
-            data:{id:source+target+id, source:source, target:target, label:id}
-    });
-}
-var display_members = function(groupfile, discussion){
+
+var display_members = function(namelist, discussion){
     //read the group file and store
     if(discussion == 'stopped'){
-        jQuery.get(groupfile, function(data){
-        //console.log(data);         
-        console.log("---");
-        namelist = data.split(',');
-        })
-         var namelist = [ {name:"Nikola Tesla", dp:'nikolas'},
-                          {name:"Ludwig Van Beethoven",dp:'ludwig'},
-                          {name:"Lenardo da Vinci",dp:'leo'},
-                          {name:"Srinivasa Ramanujan",dp:'srini'},
-                          {name:"Galileo Galilei",dp:'galileo'},
-                          {name:"Isaac Newton",dp:'isaac'},
-                          {name:"Charles Darwin",dp:'darwin'},
-                          {name:"Alan Turing",dp:'alan'},
-                          {name:"Ada lovelace",dp:'ada'},
-                          {name:"Charles Babbage",dp:'babbage'},
-                          {name:"Albert Einstein",dp:'albert'}   
-                         ];
-        //discussion = 'started';
+        console.log("Namelist %s", namelist);
+        namelist = namelist.split('\n');
+        //This will store in namelist comma separated arrays of Name and image
+        console.log("After Split %s", namelist[0]);
+        discussion = 'started';
         var first_session = Math.ceil(namelist.length/2);
         console.log(first_session);
         var second_session = namelist.length - first_session;
-        pos = {'x':0, 'y':0}
+		  //{ x: 800, y: 800 }
         while(first_session>0){
             --first_session;
             //Randomly add students to discussion
@@ -165,6 +186,8 @@ var display_members = function(groupfile, discussion){
                 console.log(namelist);
             }
         }
+		  cy.layout(options)
+		  cy.centre()
         console.log(namelist.length);
         console.log(namelist);
     }    
@@ -180,9 +203,9 @@ var display_members = function(groupfile, discussion){
     }
 
 }
+//display_members('groupa.txt', 'stopped');
 var toggle_node = function(element){
     //make node active/inactive
 }
-display_members('groupa.txt', 'stopped');
 });
 
