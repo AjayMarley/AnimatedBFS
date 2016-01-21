@@ -24,10 +24,11 @@ $(function(){//On dom ready
             console.log("No file selected");
         }
 	});
-    console.log(namelist);
     var total = 0;
     var prev = -1
-    var id = -1;
+    var prevd = new Date();
+    var curd = new Date();
+    var edge_id = -1;
     // discussion refers to the entire session
     //Can hold 3 states 'started', 'suspended', 'stopped'
     var discussion = 'stopped' 
@@ -42,55 +43,14 @@ $(function(){//On dom ready
             'border-color': '#000',
             'border-width': 3,
             'border-opacity': 0.5,
-            'content' :'data(name)',
+            'content' :'data(summary)',
+            'background-image': 'data(pic)',
             'selectable' : true,
             'grabbable' :true,
             'locked' :true,
+            //'min-zoomed-font-size': '7',
+            'text-wrap' : 'wrap'
         })
-        .selector('.nikolas')
-            .css({
-                'background-image':'nikolas.jpg'
-                })
-        .selector('.albert')
-            .css({
-                'background-image':'albert.jpg'
-                })
-        .selector('.isaac')
-            .css({
-                'background-image':'isaac.jpg'
-                })
-        .selector('.srini')
-            .css({
-                'background-image':'srini.jpg'
-                })
-        .selector('.leo')
-            .css({
-                'background-image':'leo.jpg'
-                })
-        .selector('.galileo')
-            .css({
-                'background-image':'galileo.jpg'
-                })
-        .selector('.alan')
-            .css({
-                'background-image':'alan.jpg'
-                })
-        .selector('.darwin')
-            .css({
-                'background-image':'darwin.jpg'
-                })
-        .selector('.ludwig')
-            .css({
-                'background-image':'ludwig.jpg'
-                })
-        .selector('.babbage')
-            .css({
-                'background-image':'babbage.jpg'
-                })
-        .selector('.ada')
-            .css({
-                'background-image':'ada.jpg'
-                })
 
         .selector('edge')
             .css({
@@ -133,33 +93,50 @@ $(function(){//On dom ready
 	 
 //select event handler
 cy.on('select', 'node', function(event){
-    id++;
+    edge_id++;
     if(prev == -1){
-        prev = this;
-        console.log("First Click"+prev.data().name);
+        prevd = new Date();
+        console.log("First Click"+ this.data().name);
         // highlight(node);
+        this.data().summary = this.data().name+ '\n Contributions: ' + ++this.data().count + '\n Duration: ' + this.data().duration + ' secs'; 
+        this.data(this.data())
+        prev = this;
+        console.log(this.id);
     }
     else{
-        //console.log("Adding edges between"+ prev.data().name +"and" + this.data().name); 
+        curd = new Date();
+        prev.data().duration += Math.round((curd.getTime() - prevd.getTime())/1000);
+        console.log("Adding edges between"+ prev.data().name +" and " + this.data().name); 
         cy.add({group: 'edges',
-                data: {id:prev.id()+this.id()+id, source:prev.id(), target:this.id(), label:id}
+                data: {id:prev.id()+this.id()+edge_id, source:prev.id(), target:this.id(), label:edge_id}
         })
+        prev.data().summary = prev.data().name+ '\n Contributions: ' + prev.data().count + '\n Duration: ' + prev.data().duration + ' secs';
+        prev.data(prev.data());
+        this.data().count = this.data().count+1;
+        this.data(this.data())
         prev= this;
+        prevd = curd;
     }
 });
     
 
 //Node addition    
-var add_student = function(name, classn, pic){
+var add_student = function(id, name, pic){
+   var count = 0;
+   var duration =0;
    cy.add({group: 'nodes', 
-           data:{ id: name, 
+           data:{ id: id, 
                   name: name, 
-                  pic: pic 
+                  pic: pic, 
+                  count: count,
+                  duration: duration,
+                  summary: name+ '\nContributions:' + count + '\nDuration:' + duration + 'secs'
                 },
-           'classes':classn,
-			  renderedPosition:pos 
-         })
-}
+        //  'classes':classn,
+        //Layout options takes care of position
+		//  renderedPosition:pos 
+         });
+};
 
 var display_members = function(namelist, discussion){
     //read the group file and store
@@ -169,25 +146,27 @@ var display_members = function(namelist, discussion){
         //This will store in namelist comma separated arrays of Name and image
         console.log("After Split %s", namelist[0]);
         discussion = 'started';
-        var first_session = Math.ceil(namelist.length/2);
-        console.log(first_session);
+        var index = 0;
+        var first_session = namelist.length-1//Math.ceil(namelist.length/2);
+        console.log("Number of students in first session =%d",first_session);
         var second_session = namelist.length - first_session;
-		  //{ x: 800, y: 800 }
-        while(first_session>0){
-            --first_session;
+        while(index < first_session){
+
+            //--first_session;
             //Randomly add students to discussion
-            var stud = namelist[Math.floor(Math.random()*namelist.length)];
-            console.log("Student name:"+stud);
-            add_student(stud.name, stud.name, stud.dp,pos, pos);
-            //In a less likely event of name not in array
-            if(namelist.indexOf(stud) != -1){
-                //1 because I want to remove one element
-                namelist.splice(namelist.indexOf(stud),1);
-                console.log(namelist);
-            }
+            //var index = Math.floor(Math.random()*(namelist.length-1));
+            //Note:namelist -1 because '\n' is adding an empty element
+            //Need to figure out how to do it elegantly
+            var stud ={ id:index, name:namelist[index].split(',')[0], pic:namelist[index].split(',')[1] }
+            console.log("Student Name: %s, Student picture: %s", stud.name, stud.pic);
+            add_student(stud.id, stud.name, stud.pic);
+            index++;
+            //1 because I want to remove one element
+            //namelist.splice(index, 1);
+            //console.log(namelist);
         }
-		  cy.layout(options)
-		  cy.centre()
+		cy.layout(options)
+		cy.centre()
         console.log(namelist.length);
         console.log(namelist);
     }    
@@ -203,6 +182,13 @@ var display_members = function(namelist, discussion){
     }
 
 }
+document.getElementById("generatepng").addEventListener('click', function(){
+
+    
+  var png = cy.png({full:true});
+  document.getElementById("imagePng").attr('src') = png;
+  console.log("Image generated");
+});
 //display_members('groupa.txt', 'stopped');
 var toggle_node = function(element){
     //make node active/inactive
