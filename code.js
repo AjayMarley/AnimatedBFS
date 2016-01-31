@@ -55,8 +55,11 @@ $(function(){//On dom ready
         .selector('edge')
             .css({
                     'transition-time':'3.0s',
+                    'line-color': '#ccc',
+                    'width': 3,
                     'target-arrow-shape': 'triangle',
                     'label':' data(label)',
+                    'min-zoomed-font-size': '10',
 				    'curve-style': 'bezier',
                 	'control-point-step-size': 40
         }),
@@ -71,16 +74,16 @@ $(function(){//On dom ready
 
     });
 	 //I am selecting a circular layout for the nodes
-	 var options = {
+	 /*var options = {
 	   name: 'circle',
 
 	   fit: true, // whether to fit the viewport to the graph
 	   padding: 30, // the padding on fit
 	   boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
 	   avoidOverlap: true, // prevents node overlap, may overflow boundingBox and radius if not enough space
-	   radius: 300, // the radius of the circle
+	   radius: 20, // the radius of the circle
 	   startAngle: 3/2 * Math.PI, // where nodes start in radians
-	   sweep: undefined, // how many radians should be between the first and last node (defaults to full circle)
+	   sweep: undefined,//undefined, // how many radians should be between the first and last node (defaults to full circle)
 	   clockwise: true, // whether the layout should go clockwise (true) or counterclockwise/anticlockwise (false)
 	   sort: undefined, // a sorting function to order the nodes; e.g. function(a, b){ return a.data('weight') - b.data('weight') }
 	   animate: false, // whether to transition the node positions
@@ -89,7 +92,8 @@ $(function(){//On dom ready
 	   ready: undefined, // callback on layoutready
 	   stop: undefined // callback on layoutstop
 	 };
-	 
+	*/ 
+    var options = { name:'spread', minDist:200};
 	 
 //select event handler
 cy.on('select', 'node', function(event){
@@ -98,7 +102,7 @@ cy.on('select', 'node', function(event){
         prevd = new Date();
         console.log("First Click"+ this.data().name);
         // highlight(node);
-        this.data().summary = this.data().name+ '\n Contributions: ' + ++this.data().count + '\n Duration: ' + this.data().duration + ' secs'; 
+        this.data().summary = this.data().name+ '\n C: ' + ++this.data().count + '\n D: ' + this.data().duration + ' secs'; 
         this.data(this.data())
         prev = this;
         console.log(this.id);
@@ -110,7 +114,7 @@ cy.on('select', 'node', function(event){
         cy.add({group: 'edges',
                 data: {id:prev.id()+this.id()+edge_id, source:prev.id(), target:this.id(), label:edge_id}
         })
-        prev.data().summary = prev.data().name+ '\n Contributions: ' + prev.data().count + '\n Duration: ' + prev.data().duration + ' secs';
+        prev.data().summary = prev.data().name+ '\n C: ' + prev.data().count + '\n D: ' + prev.data().duration + ' secs';
         prev.data(prev.data());
         this.data().count = this.data().count+1;
         this.data(this.data())
@@ -130,7 +134,7 @@ var add_student = function(id, name, pic){
                   pic: pic, 
                   count: count,
                   duration: duration,
-                  summary: name+ '\nContributions:' + count + '\nDuration:' + duration + 'secs'
+                  summary: name+ '\nC:' + count + '\nD:' + duration + 'secs'
                 },
         //  'classes':classn,
         //Layout options takes care of position
