@@ -189,10 +189,15 @@ var display_members = function(namelist, discussion){
 document.getElementById("generatepng").addEventListener('click', function(){
 
     
-  var png = cy.png({full:true});
-  document.getElementById("imagePng").attr('src') = png;
+  //var png = cy.png({full:true});
+  var json = cy.json();
+  //write json to a file
+  console.log("Writing to File");
+  console.log(json);
+  //document.getElementById("imagePng").attr('src') = png;
   console.log("Image generated");
 });
+
 //display_members('groupa.txt', 'stopped');
 var toggle_node = function(element){
     //make node active/inactive
