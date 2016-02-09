@@ -10,6 +10,21 @@ $(function(){//On dom ready
     var prevd = new Date();
     var curd = new Date();
     var edge_id = -1;
+ 
+ 	 var textFile = null;
+	 var makeTextFile = function (text) {
+    var data = new Blob([text], {type: 'text/plain'});
+
+    // If we are replacing a previously generated file we need to
+    // manually revoke the object URL to avoid memory leaks.
+    if (textFile !== null) {
+      window.URL.revokeObjectURL(textFile);
+    }
+
+    textFile = window.URL.createObjectURL(data);
+	 console.log(textFile);
+    return textFile;
+  };
     var cy = cytoscape({
         container: document.getElementById('cy'),
         style: cytoscape.stylesheet()
@@ -82,13 +97,15 @@ $(function(){//On dom ready
 			  document.getElementById("generatepng").addEventListener('click', function(){
 			  	console.log("Discussion in Handler:",discussion);
 			  	if(discussion == 'started'){
-			  		var jpg =  	cy.jpg();
-			  		console.log(jpg);
+			  		//var jpg =  	cy.jpg();
+			  		//console.log(jpg);
 			  		var json = cy.json();
 			  		//write json to a file
 			  		console.log("Writing to File");
 			  		console.log(json);
-			  		$('#imagePng').attr('src',png);
+			  		var link = document.getElementById("downloadlink");
+				   link.href = makeTextFile(JSON.stringify(json));
+			  		//$('#imagePng').attr('src',png);
 			  		console.log("Image generated");
 			  	}else{
 			  		console.log("Discussion:%s", discussion);
