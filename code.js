@@ -71,7 +71,7 @@ $(function(){//On dom ready
 					'text-background-color':'#000',
 					'font-family': 'Helvetica',
 						'text-valign': 'center',
-                	'text-halign': 'center',
+                	'text-halign': 'right',
 					'text-border-opacity':'0.7'
 		 		})
 			.selector('.best')
@@ -151,7 +151,7 @@ $(function(){//On dom ready
 	   name: 'circle',
 
 	   fit: true, // whether to fit the viewport to the graph
-	   padding: 5, // the padding on fit
+	   padding: 50, // the padding on fit
 		condense: true,
 	   boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
 	   avoidOverlap: true, // prevents node overlap, may overflow boundingBox and radius if not enough space
@@ -313,9 +313,9 @@ var display_members = function(namelist){
 			//namelist.splice(index, 1);
 			//console.log(namelist);
 		}
-		var eles1 = cy.nodes("[id<=7]");
+		var eles1 = cy.nodes("[id<=10]");
 		eles1.layout(options);
-		var eles2 = cy.nodes("[id>7]");
+		var eles2 = cy.nodes("[id>10]");
 		eles2.layout(options);
 		cy.centre();
 		console.log(namelist.length);
