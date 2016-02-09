@@ -26,7 +26,7 @@ $(function(){//On dom ready
             'selectable' : true,
             'grabbable' :true,
 				'autolock': false,
-            'min-zoomed-font-size': '16',
+            //'min-zoomed-font-size': '10',
             'text-wrap' : 'wrap'
         })
 
@@ -54,11 +54,11 @@ $(function(){//On dom ready
 					'text-border-width':'15',
 					'text-background-opacity':'0.4',
 					'text-background-color':'#000',
-						'font-family': 'Helvetica',
+					'font-family': 'Helvetica',
 						'text-valign': 'center',
                 	'text-halign': 'center',
-					//'text-border-opacity':'0.7'
-		  		})
+					'text-border-opacity':'0.7'
+		 		})
 			.selector('.best')
 				.css({
 					'border-width':15,
