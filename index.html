@@ -15,13 +15,12 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js"></script>                   <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.0/lodash.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 <script src="http://marvl.infotech.monash.edu/webcola/cola.v3.min.js"></script>
-<script src="http://cytoscape.github.io/cytoscape.js/api/cytoscape.js-latest/cytoscape.min.js"></script>
 <script src="https://cdn.rawgit.com/cytoscape/cytoscape.js-spread/1.0.4/cytoscape-spread.js"></script>
 <script src="http://cdnjs.cloudflare.com/ajax/libs/qtip2/2.2.0/jquery.qtip.min.js"></script>
 <!--<script src="code-ui.js"></script>-->
 <script src="code.js"></script>
 </head>
-<body>
+<body background="bg.jpg">
 <div id="cy"></div>
 <span class="fa fa-bars config-toggle" id="config-toggle"></span>
 <div id="config" class="config">
@@ -30,12 +29,21 @@
 
         <p>A proof of concept for the group discussion pattern generation tool.</p>
         <p>
-          Class Website <a href="http://ubicomp.ucsd.edu/cse118-218/schedule/">UbiComp 118/218</a><br/>
+          
 			 <input type="file" id="studentfile">Use .csv, .xls or .txt file</input>
-			 <p>Each file load will create a new discussion group</p>
-             <input type="button" id="generatepng" value="Generate Image"/>
+			 Class Website <br/>
+			 <select name="course">
+			   <option value="CSE291">CSE291</option>
+			   <option value="CSE118/218">CSE118/218</option>
+			 </select>
+			 <select name="layout">
+			   <option value="cirlce">Circle</option>
+			   <option value="grid">Grid</option>
+			 </select></br>
+			 	<input type="button" id="startgraph" value="Start"/>
+			 <!--<p>Each file load will create a new discussion group</p> -->
+             <input type="button" id="generatepng" value="Stop"/>
              <img id = "imagePng"/>
-             <input type="button" id="recordJson" value="Stop"/>
         </p>
       </div>
       
