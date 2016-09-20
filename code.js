@@ -462,9 +462,9 @@ $(function() { //On dom ready
 											y1: 1204,
 											y2: 1304};
 					moderators.layout(options2);
-					moderators.lock();
+					//moderators.lock();
+					//cy.centre();
 					cy.fit();
-					cy.centre();
 					cy.off('select', mod_handler);
 					cy.on('select', 'node', mapping_handler);
 				}
